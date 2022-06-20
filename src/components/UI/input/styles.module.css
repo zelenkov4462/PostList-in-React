@@ -1,0 +1,10 @@
+.input {
+    width: 100%;
+    border: 1px solid teal;
+    padding: 10px 5px;
+    margin: 5px 0;
+}
+
+input:hover {
+    border-color: orange;
+}

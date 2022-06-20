@@ -1,0 +1,10 @@
+.btn {
+    padding: 10px 5px;
+    border: 1px solid teal;
+    background: transparent;
+    cursor: pointer;
+}
+
+.btn:hover {
+    border-color: red;
+}
