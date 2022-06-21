@@ -9,13 +9,16 @@ import Button from "./components/UI/button/Button";
 import { usePosts } from "./hooks/usePosts";
 import PostService from "./API/PostService";
 import Loader from "./components/UI/Loader/Loader";
+import { useFetching } from "./hooks/useFetching";
 
 function App() {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
-  const [isPostsLoading, setIsPostsLoading] = useState(false);
-
+  const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+    const posts = await PostService.getAll();
+    setPosts(posts);
+  });
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
 
   useEffect(() => {
@@ -31,15 +34,6 @@ function App() {
     setPosts(posts.filter((p) => p.id !== post.id));
   };
 
-  async function fetchPosts() {
-    setIsPostsLoading(true);
-    setTimeout(async () => {
-      const posts = await PostService.getAll();
-      setPosts(posts);
-      setIsPostsLoading(false);
-    }, 1000);
-  }
-
   return (
     <div className="App">
       <Button style={{ marginTop: "30px" }} onClick={() => setModal(true)}>
@@ -51,6 +45,7 @@ function App() {
 
       <hr style={{ margin: "10px" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
+      {postError && <h1>Произошла ошибка {postError} </h1>}
       {isPostsLoading ? (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Loader />
