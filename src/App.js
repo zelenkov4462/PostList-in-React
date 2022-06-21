@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import "./styles/App.css";
 import PostList from "./components/PostList";
@@ -16,7 +16,19 @@ function App() {
   const [selectedSort, setSelectedSort] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const getSortedPosts = () => {
+  // const getSortedPosts = () => {
+  //   console.log("сработала");
+  //   if (selectedSort) {
+  //     return [...posts].sort((a, b) =>
+  //       a[selectedSort].localeCompare(b[selectedSort])
+  //     );
+  //   }
+  //   return posts;
+  // };
+
+  // const sortedPosts = getSortedPosts();
+
+  const sortedPosts = useMemo(() => {
     console.log("сработала");
     if (selectedSort) {
       return [...posts].sort((a, b) =>
@@ -24,9 +36,13 @@ function App() {
       );
     }
     return posts;
-  };
+  }, [selectedSort, posts]);
 
-  const sortedPosts = getSortedPosts();
+  const sortedAndSearchedPosts = useMemo(() => {
+    return sortedPosts.filter((post) =>
+      post.title.toLowerCase().includes(searchQuery)
+    );
+  }, [searchQuery, sortedPosts]);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -60,11 +76,12 @@ function App() {
         ]}
       />
 
-      {posts.length ? (
+      {sortedAndSearchedPosts.length ? (
         // <PostList remove={removePost} posts={posts} />
-        <PostList remove={removePost} posts={sortedPosts} />
+        // <PostList remove={removePost} posts={sortedPosts} />
+        <PostList remove={removePost} posts={sortedAndSearchedPosts} />
       ) : (
-        <h1 style={{ textAlign: "center" }}>Посты отсутсвуют</h1>
+        <h1 style={{ textAlign: "center" }}>Посты не найдены</h1>
       )}
     </div>
   );
